@@ -1,0 +1,14 @@
+{
+    "name": "heitor",
+    "preferences": {
+        "minah_cor": "verde",
+        "": "minha cor favorita?"
+    },
+    "heitor": {
+        "preferences": {
+            "cor": "verde",
+            "qual": "minha cor favorita",
+            "serie": "got"
+        }
+    }
+}
