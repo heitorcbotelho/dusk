@@ -10,47 +10,55 @@ def main():
     create_folder_keywords = ["criar pasta", "crie uma pasta", "adicionar pasta"]
     preferences_keywords = ["preferência", "gosto", "favorita", "favorito"]
 
-    name = load_name()
-    if name is None:
-        name = input("Olá, qual é o seu nome?: ")
-        save_name(name)
+    # Inicialização do nome do usuário
+    try:
+        name = load_name()
+        if name is None or name.strip() == "":
+            name = input("Olá, qual é o seu nome?: ").strip()
+            if name:
+                save_name(name)
+            else:
+                name = "usuário"
+                save_name(name)
+    except Exception as e:
+        print(f"Houve um problema ao carregar seu nome: {e}")
+        name = "usuário"
 
     print(get_greeting(name))
 
     while True:
-        command = input("> ").lower().strip()
-        action = command.split()[0] if command else ""
-
-        match action:
-            case _ if any(k in command for k in getout_keyword):
+        try:
+            command = input("> ").lower().strip()
+            
+            if not command:
+                continue
+                
+            # Verifica se o usuário deseja sair
+            if any(k in command for k in getout_keyword):
                 print(get_bye())
                 break
-
-            case _ if any(k in command for k in create_folder_keywords):
+                
+            # Processar comandos
+            if any(k in command for k in create_folder_keywords):
                 create_folder(command)
-
-            case _ if "site" in command:
+            elif "site" in command:
                 open_website(command)
-
-            case _ if any(k in command for k in open_programs_keywords):
+            elif any(k in command for k in open_programs_keywords):
                 open_programs(command, name)
-
-            case _ if any(k in command for k in hour_keywords):
+            elif any(k in command for k in hour_keywords):
                 show_time()
-
-            case _ if any(k in command for k in date_keywords):
+            elif any(k in command for k in date_keywords):
                 show_date()
-
-            case _ if any(k in command for k in preferences_keywords):
+            elif any(k in command for k in preferences_keywords):
                 handle_preferences(command, name)
-
-            case _:
+            else:
                 print(get_error())
+                
+            print("Precisa de mais alguma coisa?")
+            
+        except Exception as e:
+            print(f"Ocorreu um erro inesperado: {e}")
+            print("Vamos tentar novamente.")
 
-        print("Precisa de mais alguma coisa?")
 if __name__ == "__main__":
     main()
-
-
-
-

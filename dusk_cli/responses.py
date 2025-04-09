@@ -2,7 +2,6 @@ import datetime
 import random
 from dusk_cli.memory import load_name
 
-name = load_name()
 def get_time():
     hour = datetime.datetime.now().hour
     if 5 <= hour < 12:
@@ -11,12 +10,12 @@ def get_time():
         return "Boa tarde"
     return "Boa noite"
 
-def get_opening_phrase(program, name):
+def get_opening_phrase(program, name=""):
     return random.choice([
         f"Abrindo {program}...",
         f"Claro! Iniciando {program}.",
         f"{program}? Ok!",
-        f"Pode deixar {name}, abrindo {program} agora!"
+        f"Pode deixar {name}, abrindo {program} agora!" if name else f"Pode deixar, abrindo {program} agora!"
     ])
 
 def get_greeting(name):

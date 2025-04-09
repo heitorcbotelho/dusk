@@ -5,7 +5,6 @@ import webbrowser
 from dusk_cli.responses import get_opening_phrase, get_create_folder, get_open_website
 from dusk_cli.memory import save_preference, get_preference, load_name
 
-name = load_name()
 programs = {
     "calculadora": "calc.exe",
     "bloco": "notepad.exe",
@@ -16,17 +15,20 @@ programs = {
 ask_keywords = ["qual", "qual é", "meu", "minha"]
 save_keywords = ["é", "gosto de", "prefiro"]
 
-def open_programs(command):
-    com = command.split()[-1].lower()
-    if com in programs:
-        try:
-            subprocess.Popen([programs[com]])
-            print(get_opening_phrase(com))
-        except Exception as e:
-            print(f"Houve um erro ao tentar abrir {com}: {e}")
-
-    else:
-        print(f"Desculpe {load_name()}, ainda não sei abrir {com}.")
+def open_programs(command, name=""):
+    try:
+        com = command.split()[-1].lower()
+        if com in programs:
+            try:
+                subprocess.Popen([programs[com]])
+                print(get_opening_phrase(com, name))
+            except Exception as e:
+                print(f"Houve um erro ao tentar abrir {com}: {e}")
+        else:
+            user_name = name or load_name() or ""
+            print(f"Desculpe {user_name}, ainda não sei abrir {com}.")
+    except IndexError:
+        print("Por favor, especifique qual programa deseja abrir.")
 
 def show_time():
     now = datetime.datetime.now().strftime("%H:%M")
@@ -37,24 +39,33 @@ def show_date():
     print(f"Hoje é {today}")
 
 def create_folder(command):
-    base_path = r"C:\Users\heito\OneDrive\Área de Trabalho\Pastas e Arquivos\Programação\Dusk pastas"
+    try:
+        base_path = os.path.expanduser("~/Desktop/Dusk pastas")
+        os.makedirs(base_path, exist_ok=True)
 
-    parts = command.split()
-    folder_name = parts[-1] if len(parts) > 2 else None #Ex: "criar pasta teste"
+        parts = command.split()
+        folder_name = parts[-1] if len(parts) > 2 else None #Ex: "criar pasta teste"
 
-    while True:
-        if not folder_name:
-            folder_name = input("Qual vai ser o nome da pasta?: ")
+        while True:
+            if not folder_name:
+                folder_name = input("Qual vai ser o nome da pasta?: ")
+                
+            if not folder_name.strip():
+                print("O nome da pasta não pode ser vazio.")
+                folder_name = None
+                continue
 
-        full_path = os.path.join(base_path, folder_name)
+            full_path = os.path.join(base_path, folder_name)
 
-        if not os.path.exists(full_path):
-            os.makedirs(full_path)
-            print(get_create_folder(folder_name))
-            break
-        else:
-            print(f"A pasta {folder_name} ja existe, escolha outro nome.")
-            folder_name = None
+            if not os.path.exists(full_path):
+                os.makedirs(full_path)
+                print(get_create_folder(folder_name))
+                break
+            else:
+                print(f"A pasta {folder_name} já existe, escolha outro nome.")
+                folder_name = None
+    except Exception as e:
+        print(f"Ocorreu um erro ao criar a pasta: {e}")
 
 def open_website(command):
     urls = {
@@ -63,9 +74,17 @@ def open_website(command):
         "wikipedia": "https://wikipedia.com"
     }
 
-    words = command.split()
     try:
+        words = command.split()
+        if "site" not in words:
+            print("Por favor, especifique qual site deseja abrir.")
+            return
+            
         site_index = words.index("site")
+        if site_index + 1 >= len(words):
+            print("Por favor, especifique qual site deseja abrir.")
+            return
+            
         site_name = words[site_index + 1]
 
         if site_name in urls:
@@ -75,8 +94,8 @@ def open_website(command):
             webbrowser.open(url)
         print(get_open_website(site_name))
 
-    except (ValueError, IndexError):
-        print("Não consegui entender qual site abrir.")
+    except Exception as e:
+        print(f"Não consegui abrir o site: {e}")
 
 def clean_text(text):
     return text.replace("?", "").strip().lower()
