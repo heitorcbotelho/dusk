@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aba3d39a-06b1-4265-9def-c06acf3a96b3" name="Changes" comment="primeiro commit do chatbot com funções de abrir programas simples, mostrar hora e data.">
-      <change beforePath="$PROJECT_DIR$/.idea/PythonProject2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PythonProject2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="aba3d39a-06b1-4265-9def-c06acf3a96b3" name="Changes" comment="alterações">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/file.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/file.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dusk_cli/command.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusk_cli/command.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusk_cli/data/file.json" beforeDir="false" afterPath="$PROJECT_DIR$/dusk_cli/data/file.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dusk_cli/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusk_cli/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusk_cli/memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusk_cli/memory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusk_cli/responses.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusk_cli/responses.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,11 +123,20 @@
       <option name="project" value="LOCAL" />
       <updated>1743865226704</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="alterações">
+      <option name="closed" value="true" />
+      <created>1744210712069</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1744210712069</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="primeiro commit do chatbot com funções de abrir programas simples, mostrar hora e data." />
-    <option name="LAST_COMMIT_MESSAGE" value="primeiro commit do chatbot com funções de abrir programas simples, mostrar hora e data." />
+    <MESSAGE value="alterações" />
+    <option name="LAST_COMMIT_MESSAGE" value="alterações" />
   </component>
 </project>

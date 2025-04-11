@@ -5,54 +5,70 @@ import webbrowser
 from dusk_cli.responses import get_opening_phrase, get_create_folder, get_open_website
 from dusk_cli.memory import save_preference, get_preference, load_name
 
-programs = {
+PROGRAMS = {
     "calculadora": "calc.exe",
     "bloco": "notepad.exe",
     "steam": r"C:\Program Files (x86)\Steam\steam.exe",
     "obs": r"C:\Program Files\obs-studio\bin\64bit\obs64.exe",
 }
 
-ask_keywords = ["qual", "qual é", "meu", "minha"]
-save_keywords = ["é", "gosto de", "prefiro"]
+ASK_KEYWORDS = ["qual", "qual é", "meu", "minha"]
+SAVE_KEYWORDS = ["é", "gosto de", "prefiro"]
 
-def open_programs(command, name=""):
+URLS = {
+    "google": "https://google.com",
+    "youtube": "https://youtube.com",
+    "wikipedia": "https://wikipedia.com",
+}
+
+def open_programs(command: str, name: str = "") -> None:
+    """
+    Abre um programa baseado no comando fornecido.
+    """
     try:
-        com = command.split()[-1].lower()
-        if com in programs:
-            try:
-                subprocess.Popen([programs[com]])
-                print(get_opening_phrase(com, name))
-            except Exception as e:
-                print(f"Houve um erro ao tentar abrir {com}: {e}")
+        program_key = command.split()[-1].lower()
+        if program_key in PROGRAMS:
+            subprocess.Popen([PROGRAMS[program_key]])
+            print(get_opening_phrase(program_key, name))
         else:
             user_name = name or load_name() or ""
-            print(f"Desculpe {user_name}, ainda não sei abrir {com}.")
+            print(f"Desculpe {user_name}, ainda não sei abrir {program_key}.")
     except IndexError:
         print("Por favor, especifique qual programa deseja abrir.")
+    except Exception as e:
+        print(f"Houve um erro ao tentar abrir o programa: {e}")
 
-def show_time():
+def show_time() -> None:
+    """
+    Mostra a hora atual.
+    """
     now = datetime.datetime.now().strftime("%H:%M")
     print(f"Agora são {now}")
 
-def show_date():
+def show_date() -> None:
+    """
+    Mostra a data atual.
+    """
     today = datetime.datetime.now().strftime("%d/%m/%Y")
     print(f"Hoje é {today}")
 
-def create_folder(command):
+def create_folder(command: str) -> None:
+    """
+    Cria uma pasta na pasta determinada pelo usuário
+    """
     try:
         base_path = os.path.expanduser("~/Desktop/Dusk pastas")
         os.makedirs(base_path, exist_ok=True)
 
         parts = command.split()
-        folder_name = parts[-1] if len(parts) > 2 else None #Ex: "criar pasta teste"
+        folder_name = parts[-1] if len(parts) > 2 else None  # Ex: "criar pasta teste"
 
         while True:
             if not folder_name:
-                folder_name = input("Qual vai ser o nome da pasta?: ")
-                
-            if not folder_name.strip():
+                folder_name = input("Qual vai ser o nome da pasta?: ").strip()
+            
+            if not folder_name:
                 print("O nome da pasta não pode ser vazio.")
-                folder_name = None
                 continue
 
             full_path = os.path.join(base_path, folder_name)
@@ -67,13 +83,10 @@ def create_folder(command):
     except Exception as e:
         print(f"Ocorreu um erro ao criar a pasta: {e}")
 
-def open_website(command):
-    urls = {
-        "google": "https://google.com",
-        "youtube": "https://youtube.com",
-        "wikipedia": "https://wikipedia.com"
-    }
-
+def open_website(command: str) -> None:
+    """
+    Abre um site baseado no comando fornecido.
+    """
     try:
         words = command.split()
         if "site" not in words:
@@ -85,26 +98,34 @@ def open_website(command):
             print("Por favor, especifique qual site deseja abrir.")
             return
             
-        site_name = words[site_index + 1]
+        site_name = words[site_index + 1].lower()
 
-        if site_name in urls:
-            webbrowser.open(urls[site_name])
+        if site_name in URLS:
+            webbrowser.open(URLS[site_name])
         else:
             url = f"https://{site_name}.com"
             webbrowser.open(url)
         print(get_open_website(site_name))
-
     except Exception as e:
         print(f"Não consegui abrir o site: {e}")
 
-def clean_text(text):
+def clean_text(text: str) -> str:
+    """
+    Limpa o texto removendo caracteres especiais e espaços desnecessários.
+    """
     return text.replace("?", "").strip().lower()
 
-def is_question(command):
+def is_question(command: str) -> bool:
+    """
+    Determina se o comando é uma pergunta.
+    """
     question_words = ["qual", "quais", "o que", "quem", "quando", "como", "onde"]
     return any(command.startswith(q) for q in question_words)
 
-def extract_key_value(command):
+def extract_key_value(command: str) -> tuple[str, str]:
+    """
+    Extrai a chave e o valor de um comando de preferência.
+    """
     if " é " in command:
         parts = command.split(" é ")
         if len(parts) == 2:
@@ -114,12 +135,18 @@ def extract_key_value(command):
             return key, value
     return None, None
 
-def extract_key_from_question(command):
+def extract_key_from_question(command: str) -> str:
+    """
+    Extrai a chave de uma pergunta sobre preferências.
+    """
     question = command.replace("qual é", "").replace("meu", "").replace("minha", "").replace("favorito", "").replace("favorita", "")
     key = question.strip().replace(" ", "_")
     return key
 
-def handle_preferences(command, user_name):
+def handle_preferences(command: str, user_name: str) -> None:
+    """
+   Registra ou recupera preferências do usuário.
+    """
     command = clean_text(command)
 
     if is_question(command):
@@ -137,3 +164,15 @@ def handle_preferences(command, user_name):
         print(f"Ok {user_name}, eu salvei sua {key.replace('_', ' ')} como {value}.")
     else:
         print("Não entendi. Pode repetir de outra forma?")
+
+def show_help(command):
+    """
+    Mostra uma lista de comandos disponíveis.
+    """
+    print("Aqui estão algumas coisas que posso fazer:")
+    print("- Criar pastas")
+    print("- Abrir programas")
+    print("- Mostrar a hora")
+    print("- Mostrar a data")
+    print("- Abrir sites")
+    print("- Salvar e recuperar preferências pessoais")
