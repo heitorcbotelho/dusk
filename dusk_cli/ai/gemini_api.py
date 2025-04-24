@@ -2,6 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from dusk_cli.memory import load_preferences
+import textwrap
 
 load_dotenv()
 
@@ -11,17 +12,17 @@ BASE_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-
 def think(command, name):
     preferences = load_preferences(name)
 
-    context = f"""
-               Você é um assistente virtual inteligente chamado Dusk, amigável e útil.
-               Seu objetivo é ajudar o usuário com qualquer dúvida ou tarefa.
+    context = textwrap.dedent(f"""
+        Você é um assistente virtual inteligente chamado Dusk, amigável e útil.
+        Seu objetivo é ajudar o usuário com qualquer dúvida ou tarefa.
 
-               Nome do usuário: {name}
-               Preferências do usuário: {preferences}
+        Nome do usuário: {name}
+        Preferências do usuário: {preferences}
 
-               Comando do usuário: {command}
+        Comando do usuário: {command}
 
-                Responda de forma clara, concisa, natural e objetiva sendo fácil de entender.
-               """
+        Responda de forma clara, concisa, natural e objetiva sendo fácil de entender.
+    """)
 
     response = ask_gemini(context.strip())
     return response
