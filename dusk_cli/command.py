@@ -5,13 +5,6 @@ import webbrowser
 from dusk_cli.responses import get_opening_phrase, get_create_folder, get_open_website
 from dusk_cli.memory import save_preference, get_preference, load_name
 
-PROGRAMS = {
-    "calculadora": "calc.exe",
-    "bloco": "notepad.exe",
-    "steam": r"C:\Program Files (x86)\Steam\steam.exe",
-    "obs": r"C:\Program Files\obs-studio\bin\64bit\obs64.exe",
-}
-
 ASK_KEYWORDS = ["qual", "qual é", "meu", "minha"]
 SAVE_KEYWORDS = ["é", "gosto de", "prefiro"]
 
@@ -21,20 +14,33 @@ URLS = {
     "wikipedia": "https://wikipedia.com",
 }
 
+PROGRAMS = {
+    "calculadora": "calc.exe",
+    "bloco": "notepad.exe",
+    "steam": r"C:\Program Files (x86)\Steam\steam.exe",
+    "obs": r"C:\Program Files\obs-studio\bin\64bit\obs64.exe",
+}
+
 def open_programs(command: str, name: str = "") -> None:
     """
     Abre um programa baseado no comando fornecido.
+    Verifica se o programa está listado no dicionário PROGRAMS.
     """
     try:
-        program_key = command.split()[-1].lower()
+        words = command.split()
+        if len(words) < 2:
+            print("Por favor, especifique qual programa deseja abrir.")
+            return
+
+        program_key = words[-1].lower()
+
+        # Verifica se o programa está listado em PROGRAMS
         if program_key in PROGRAMS:
-            subprocess.Popen([PROGRAMS[program_key]])
+            program_path = PROGRAMS[program_key]
+            subprocess.Popen([program_path])
             print(get_opening_phrase(program_key, name))
         else:
-            user_name = name or load_name() or ""
-            print(f"Desculpe {user_name}, ainda não sei abrir {program_key}.")
-    except IndexError:
-        print("Por favor, especifique qual programa deseja abrir.")
+            print(f"Desculpe {name or 'usuário'}, não sei como abrir o programa '{program_key}'.")
     except Exception as e:
         print(f"Houve um erro ao tentar abrir o programa: {e}")
 
@@ -176,3 +182,4 @@ def show_help(command):
     print("- Mostrar a data")
     print("- Abrir sites")
     print("- Salvar e recuperar preferências pessoais")
+

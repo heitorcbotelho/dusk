@@ -11,6 +11,7 @@ def main():
     from dusk_cli.memory import save_name, load_name
     from dusk_cli.responses import get_greeting, get_bye, get_error
     from dusk_cli.log import save_log
+    from dusk_cli.ai.gemini_api import ask_gemini
 
     # Palavras-chave para identificar comandos
     OPEN_PROGRAMS_KEYWORDS = ["abrir", "abre", "executar", "iniciar", "começar", "rodar", "ligar", "execute", "abra"]
@@ -72,6 +73,11 @@ def main():
             elif any(keyword in command for keyword in ["ajuda", "help"]):
                 show_help(command)
                 save_log(command, "Displayed help information.")
+            elif command.startswith("ia") or command.startswith("pesquisar"):
+                question = command.replace("ia", "").replace("pesquisar", "").strip()
+                response = ask_gemini(question)
+                print(response)
+                save_log(command, response)
 
             else:
                 error_message = get_error()
