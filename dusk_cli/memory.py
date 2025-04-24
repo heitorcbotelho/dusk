@@ -76,12 +76,14 @@ def load_name() -> str | None:
 
 def save_preference(user_name: str, key: str, value: str) -> bool:
     """
-    Salva a preferência do usuário no arquivo JSON.
+    Salva uma preferência no JSON sob a chave 'preferences' associada a um usuário.
     """
     try:
         data = load_data()
         if user_name not in data:
-            data[user_name] = {"preferences": {}}
+            data[user_name] = {}
+        if "preferences" not in data[user_name]:
+            data[user_name]["preferences"] = {}
         data[user_name]["preferences"][key] = value
         return save_data(data)
     except Exception as e:
@@ -98,3 +100,15 @@ def get_preference(user_name: str, key: str) -> str | None:
     except Exception as e:
         print(f"Erro ao obter preferência: {e}")
         return None
+
+def load_preferences(user_name: str) -> dict:
+    """
+    Carrega todas as preferências do usuário do arquivo JSON.
+    função temporária
+    """
+    try:
+        data = load_data()
+        return data.get(user_name, {}).get("preferences", {})
+    except Exception as e:
+        print(f"Erro ao carregar preferências: {e}")
+        return {}

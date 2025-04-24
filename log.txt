@@ -1,0 +1,43 @@
+[24/04/2025 16:03] - User: que horas são?
+[24/04/2025 16:03] - Bot: Displayed current time.
+[24/04/2025 16:04] - User: quem descobriu o brasil?
+[24/04/2025 16:04] - Bot: Hmm... ainda não aprendi isso.
+[24/04/2025 16:04] - User: ia, qual é a capital da australia?
+[24/04/2025 16:04] - Bot: A capital da Austrália é **Canberra**.
+
+[24/04/2025 16:05] - User: ERROR
+[24/04/2025 16:05] - Bot: name 'think' is not defined
+[24/04/2025 16:06] - User: ERROR
+[24/04/2025 16:06] - Bot: name 'load_preferences' is not defined
+[24/04/2025 16:08] - User: ERROR
+[24/04/2025 16:08] - Bot: get_preference() missing 1 required positional argument: 'key'
+[24/04/2025 16:12] - User: ia, qual é a capital da australia?
+[24/04/2025 16:12] - Bot: Heitor, a capital da Austrália é Canberra.
+
+[24/04/2025 16:12] - User: ia, qual é minha série favorita?
+[24/04/2025 16:12] - Bot: Handled user preferences.
+[24/04/2025 16:13] - User: minha série favorita é game of thrones
+[24/04/2025 16:13] - Bot: Handled user preferences.
+[24/04/2025 16:13] - User: sair
+[24/04/2025 16:13] - Bot: Dusk saindo...
+[24/04/2025 16:17] - User: minha série favortia é game of thrones
+[24/04/2025 16:17] - Bot: Desculpe, ainda não entendi esse comando.
+[24/04/2025 16:17] - User: qual é minha série favorita?
+[24/04/2025 16:17] - Bot: Handled user preferences.
+[24/04/2025 16:21] - User: ERROR
+[24/04/2025 16:21] - Bot: save_preference() takes 2 positional arguments but 3 were given
+[24/04/2025 16:22] - User: ERROR
+[24/04/2025 16:22] - Bot: save_preference() takes 2 positional arguments but 3 were given
+[24/04/2025 16:22] - User: ERROR
+[24/04/2025 16:22] - Bot: save_preference() takes 2 positional arguments but 3 were given
+[24/04/2025 16:24] - User: minha série favorita é doctor who
+[24/04/2025 16:24] - Bot: Handled user preferences.
+[24/04/2025 16:24] - User: minha cor favorita é azul
+[24/04/2025 16:24] - Bot: Handled user preferences.
+[24/04/2025 16:24] - User: sair
+[24/04/2025 16:24] - Bot: Até mais!
+[24/04/2025 16:25] - User: ia, quantos episódios tem minha série?
+[24/04/2025 16:25] - Bot: Heitor, a série Doctor Who tem um total de 662 episódios, considerando todas as suas temporadas e especiais.
+
+[24/04/2025 16:25] - User: encerrar
+[24/04/2025 16:25] - Bot: Até mais!

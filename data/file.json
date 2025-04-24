@@ -1,14 +1,9 @@
 {
-    "name": "heitor",
-    "preferences": {
-        "minah_cor": "verde",
-        "": "minha cor favorita?"
-    },
-    "heitor": {
+    "name": "Heitor",
+    "Heitor": {
         "preferences": {
-            "cor": "verde",
-            "qual": "minha cor favorita",
-            "serie": "doctor who"
+            "série": "doctor who",
+            "cor": "azul"
         }
     }
 }
