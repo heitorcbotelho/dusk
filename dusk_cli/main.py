@@ -1,4 +1,3 @@
-from dusk_cli.ai.gemini_api import respond_to_action
 from dusk_cli.program_launcher import open_programs
 
 
