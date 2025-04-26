@@ -1,14 +1,18 @@
+from dusk_cli.program_launcher import open_programs
+
+
 def main():
     """
     Função principal para lidar com comandos e interações do usuário.
     """
     from dusk_cli.command import (
-        open_programs, show_time, show_date, create_folder, open_website, handle_preferences, show_help
+        show_time, show_date, create_folder, open_website, handle_preferences, show_help
     )
     from dusk_cli.memory import save_name, load_name
     from dusk_cli.responses import get_greeting, get_bye, get_error
     from dusk_cli.log import save_log
     from dusk_cli.ai.gemini_api import ask_gemini, think
+    
 
     # Palavras-chave para identificar comandos
     OPEN_PROGRAMS_KEYWORDS = ["abrir", "abre", "executar", "iniciar", "começar", "rodar", "ligar", "execute", "abra"]
@@ -48,34 +52,47 @@ def main():
                 save_log(command, bye_message)
                 break
 
-            # Comandos
+            # Criar pasta
             if any(keyword in command for keyword in CREATE_FOLDER_KEYWORDS):
                 create_folder(command)
                 save_log(command, "Folder created successfully.")
             elif "site" in command:
-                open_website(command)
+                response = think(open_website(command), name)
                 save_log(command, "Website opened successfully.")
+
+            # Abrir programas    
             elif any(keyword in command for keyword in OPEN_PROGRAMS_KEYWORDS):
-                open_programs(command, name)
+                open_programs(command)
                 save_log(command, "Program opened successfully.")
+
+            # Informa a hora
             elif any(keyword in command for keyword in HOUR_KEYWORDS):
                 show_time()
                 save_log(command, "Displayed current time.")
+
+            # Informa a data
             elif any(keyword in command for keyword in DATE_KEYWORDS):
                 show_date()
                 save_log(command, "Displayed current date.")
+
+            # Preferências
             elif any(keyword in command for keyword in PREFERENCES_KEYWORDS):
                 handle_preferences(command, name)
                 save_log(command, "Handled user preferences.")
+
+            # Ajuda    
             elif any(keyword in command for keyword in ["ajuda", "help"]):
                 show_help(command)
                 save_log(command, "Displayed help information.")
+
+            # Pesquisa com o Gemini
             elif command.startswith("ia") or command.startswith("pesquisar"):
                 question = command.replace("ia", "").replace("pesquisar", "").strip()
                 response = think(question, name)
                 print(response)
                 save_log(command, response)
 
+            # Comando inválido
             else:
                 error_message = get_error()
                 print(error_message)
