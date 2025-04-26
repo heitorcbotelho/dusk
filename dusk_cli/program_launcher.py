@@ -87,7 +87,8 @@ def open_programs(command: str):
         prompt = f"O usuário disse: '{cleaned_command}'. Qual programa você acha que ele quer abrir no Windows? Responda apenas com o nome curto (tipo 'calc.exe' ou 'notepad.exe') ou nome exato do aplicativo (como 'Steam', 'Telegram')."
         response = ask_gemini(prompt)
         program_name = response.strip()
-        print(f"[DEBUG Gemini] Programa identificado: {program_name}")
+        
+        # print(f"[DEBUG Gemini] Programa identificado: {program_name}")
 
         # 1. Tenta abrir diretamente
         program_path = find_executable_direct(program_name)
