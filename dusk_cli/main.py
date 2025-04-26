@@ -1,3 +1,4 @@
+from dusk_cli.ai.gemini_api import respond_to_action
 from dusk_cli.program_launcher import open_programs
 
 
@@ -56,8 +57,10 @@ def main():
             if any(keyword in command for keyword in CREATE_FOLDER_KEYWORDS):
                 create_folder(command)
                 save_log(command, "Folder created successfully.")
+
+            # Abrir site    
             elif "site" in command:
-                response = think(open_website(command), name)
+                open_website(command)
                 save_log(command, "Website opened successfully.")
 
             # Abrir programas    
@@ -67,7 +70,7 @@ def main():
 
             # Informa a hora
             elif any(keyword in command for keyword in HOUR_KEYWORDS):
-                show_time()
+                print(show_time())
                 save_log(command, "Displayed current time.")
 
             # Informa a data

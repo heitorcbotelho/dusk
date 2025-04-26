@@ -53,3 +53,17 @@ def ask_gemini(question: str) -> str:
         return data["candidates"][0]["content"]["parts"][0]["text"]
     except requests.exceptions.RequestException as e:
         return f"Erro ao se comunicar com a API Gemini: {e}"
+
+def make_response(text: str, name: str, details = "") -> str:
+    prompt = f"""
+    Você é Dusk, um assistente virtual amigável e eficiente.
+
+    Usuário: {name}
+
+    {details}
+
+    Transforme a frase a seguir em uma resposta educada, natural e direta, sem repetir informações desnecessárias, e sem frases de introdução.
+
+    Frase: "{text}"
+    """
+    return ask_gemini(prompt.strip())

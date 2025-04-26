@@ -2,10 +2,11 @@ from difflib import get_close_matches
 import os
 import datetime
 import webbrowser
-from dusk_cli.ai.gemini_api import ask_gemini
+from dusk_cli.ai.gemini_api import ask_gemini, make_response
 from dusk_cli.responses import get_create_folder, get_open_website
-from dusk_cli.memory import save_preference, get_preference
+from dusk_cli.memory import load_name, save_preference, get_preference
 
+name = load_name()
 
 ASK_KEYWORDS = ["qual", "qual é", "meu", "minha"]
 SAVE_KEYWORDS = ["é", "gosto de", "prefiro"]
@@ -21,7 +22,9 @@ def show_time() -> None:
     Mostra a hora atual.
     """
     now = datetime.datetime.now().strftime("%H:%M")
-    print(f"Agora são {now}")
+    text = f"Agora são {now}"
+
+    return make_response(text, name, "responda o horário no formato 24 horas")
 
 def show_date() -> None:
     """
