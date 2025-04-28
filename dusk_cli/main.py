@@ -74,7 +74,7 @@ def main():
 
             # Informa a data
             elif any(keyword in command for keyword in DATE_KEYWORDS):
-                show_date()
+                print(show_date())
                 save_log(command, "Displayed current date.")
 
             # Preferências

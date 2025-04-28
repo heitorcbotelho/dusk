@@ -31,7 +31,8 @@ def show_date() -> None:
     Mostra a data atual.
     """
     today = datetime.datetime.now().strftime("%d/%m/%Y")
-    print(f"Hoje é {today}")
+    text = f"Hoje é {today}"
+    return make_response(text, name, "responda a data no formato dia/mês/ano")
 
 def create_folder(command: str) -> None:
     """

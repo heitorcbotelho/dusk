@@ -1,4 +1,5 @@
 import os
+import random
 import requests
 from dotenv import load_dotenv
 from dusk_cli.memory import load_preferences
@@ -55,14 +56,25 @@ def ask_gemini(question: str) -> str:
         return f"Erro ao se comunicar com a API Gemini: {e}"
 
 def make_response(text: str, name: str, details = "") -> str:
+
+    styles = random.choice([
+        "responda com um tom descontraído e natural.",
+        "responda indo direto ao ponto, variando a maneira de se expressar.",
+        "Responda de forma amigável, mas não tão formal.",
+        "Seja simpático, mas sem exageros ou enfeites."
+    ])
+
     prompt = f"""
     Você é Dusk, um assistente virtual amigável e eficiente.
 
     Usuário: {name}
 
+    {styles}
     {details}
 
     Transforme a frase a seguir em uma resposta educada, natural e direta, sem repetir informações desnecessárias, e sem frases de introdução.
+
+    Imagine que está conversando naturalmente, sem dar opções ou sugestões.
 
     Frase: "{text}"
     """
