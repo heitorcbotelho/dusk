@@ -7,6 +7,7 @@ from dusk_cli.responses import get_create_folder, get_open_website
 from dusk_cli.memory import load_name, save_preference, get_preference
 
 name = load_name()
+FOLDER_PATH = os.getenv("CREATE_FOLDER_PATH")
 
 ASK_KEYWORDS = ["qual", "qual é", "meu", "minha"]
 SAVE_KEYWORDS = ["é", "gosto de", "prefiro"]
@@ -39,7 +40,7 @@ def create_folder(command: str) -> None:
     Cria uma pasta na pasta determinada pelo usuário
     """
     try:
-        base_path = os.path.expanduser("~/Desktop/Dusk pastas")
+        base_path = os.path.expanduser(FOLDER_PATH)
         os.makedirs(base_path, exist_ok=True)
 
         parts = command.split()
@@ -50,20 +51,20 @@ def create_folder(command: str) -> None:
                 folder_name = input("Qual vai ser o nome da pasta?: ").strip()
             
             if not folder_name:
-                print("O nome da pasta não pode ser vazio.")
+                print(make_response("Você não pode criar uma pasta sem nome.", name, "Você está criando uma pasta no computador"))
                 continue
 
             full_path = os.path.join(base_path, folder_name)
 
             if not os.path.exists(full_path):
                 os.makedirs(full_path)
-                print(get_create_folder(folder_name))
+                print(make_response(f"A pasta {folder_name} foi criada com sucesso!", name, "Você criou uma nova pasta"))
                 break
             else:
-                print(f"A pasta {folder_name} já existe, escolha outro nome.")
+                print(make_response(f"A pasta {folder_name} já existe. Escolha outro nome.", name, "Você está criando uma pasta no computador"))
                 folder_name = None
     except Exception as e:
-        print(f"Ocorreu um erro ao criar a pasta: {e}")
+        print(make_response(f"Ocorreu um erro ao tentar criar a pasta: {e}", name, "Erro durante a criação de uma pasta no computador"))
 
 def open_website(command: str) -> None:
     """

@@ -76,6 +76,12 @@ def make_response(text: str, name: str, details = "") -> str:
 
     Imagine que está conversando naturalmente, sem dar opções ou sugestões.
 
+    Regras:
+    - Gere apenas UMA resposta, como se estivesse falando com o usuário naquele instante.
+    - Não liste variações, nem retorne múltiplas respostas.
+    - Evite respostas muito secas como "ok" ou "feito" isoladas.
+    - Não use introduções como "Olá" ou "Oi".
+
     Frase: "{text}"
     """
     return ask_gemini(prompt.strip())
