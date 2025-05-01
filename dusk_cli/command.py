@@ -68,29 +68,42 @@ def create_folder(command: str) -> None:
 
 def open_website(command: str) -> None:
     """
-    Abre um site baseado no comando fornecido.
+    Abre um site baseado no comando fornecido, utilizando o navegador padrão.
     """
     try:
-        words = command.split()
-        if "site" not in words:
-            print("Por favor, especifique qual site deseja abrir.")
-            return
-            
-        site_index = words.index("site")
-        if site_index + 1 >= len(words):
-            print("Por favor, especifique qual site deseja abrir.")
-            return
-            
-        site_name = words[site_index + 1].lower()
+        # Extrai nome do site
+        prompt_site = f"""
+        Você é um assistente que extrai apenas o nome do site solicitado em um comando.
 
-        if site_name in URLS:
-            webbrowser.open(URLS[site_name])
-        else:
-            url = f"https://{site_name}.com"
-            webbrowser.open(url)
-        print(get_open_website(site_name))
+        Comando do usuário: {command}
+
+        Retorne só o nome, como 'google', 'youtube', etc.
+        """
+        site_name = ask_gemini(prompt_site.strip().lower()).strip()
+        url = f"https://{site_name}.com"
+
+        # Detecta se é para abrir em modo anônimo
+        prompt_anon = f"""
+        O usuário quer abrir o site em modo anônimo?
+
+        Comando: "{command}"
+
+        Responda apenas 'sim' ou 'não'.
+        """
+        anon_response = ask_gemini(prompt_anon.strip().lower()).strip()
+
+        if "sim" in anon_response.lower():
+            print(make_response(
+                f"Modo anônimo ainda não é suportado com o navegador padrão. Abrindo normalmente...",
+                name,
+                "Futuramente o Dusk poderá detectar o navegador e abrir corretamente em modo privado."
+            ))
+
+        webbrowser.open_new(url)
+        print(make_response(f"O site {site_name} está sendo aberto.", name))
+
     except Exception as e:
-        print(f"Não consegui abrir o site: {e}")
+        print(make_response(f"Ocorreu um erro ao abrir o site: {e}", name, "Erro ao abrir site no navegador."))
 
 def clean_text(text: str) -> str:
     """
