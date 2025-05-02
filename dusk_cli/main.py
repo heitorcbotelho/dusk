@@ -1,109 +1,94 @@
+from dusk_cli.command import interpret_command
 from dusk_cli.program_launcher import open_programs
 
 
 def main():
-    """
-    Função principal para lidar com comandos e interações do usuário.
-    """
     from dusk_cli.command import (
-        show_time, show_date, create_folder, open_website, handle_preferences, show_help
+        show_time, show_date, create_folder, open_website,
+        handle_preferences, show_help
     )
     from dusk_cli.memory import save_name, load_name
     from dusk_cli.responses import get_greeting, get_bye, get_error
     from dusk_cli.log import save_log
-    from dusk_cli.ai.gemini_api import ask_gemini, think
-    
+    from dusk_cli.ai.gemini_api import think
 
-    # Palavras-chave para identificar comandos
-    OPEN_PROGRAMS_KEYWORDS = ["abrir", "abre", "executar", "iniciar", "começar", "rodar", "ligar", "execute", "abra"]
-    HOUR_KEYWORDS = ["horas", "relógio", "que horas", "me diz as horas", "são quantas horas", "tempo", "agora"]
-    DATE_KEYWORDS = ["data", "hoje", "dia", "qual é a data", "que dia é hoje", "data de hoje"]
-    EXIT_KEYWORDS = ["sair", "fechar", "encerrar", "até mais", "tchau", "desligar", "finalizar"]
-    CREATE_FOLDER_KEYWORDS = ["criar pasta", "crie uma pasta", "adicionar pasta"]
-    PREFERENCES_KEYWORDS = ["preferência", "gosto", "favorita", "favorito"]
-
-    # Inicialização do nome do usuário
     try:
-        name = load_name()
-        if not name or name.strip() == "":
-            name = input("Olá, qual é o seu nome?: ").strip()
-            if name:
-                save_name(name)
-            else:
-                name = "usuário"
-                save_name(name)
+        name = load_name() or input("Olá, qual é o seu nome?: ").strip() or "user"
+        save_name(name)
     except Exception as e:
-        print(f"Houve um problema ao carregar seu nome: {e}")
-        name = "usuário"
+        print(f"Houve um problema para carregar o nome: {e}")
+        name = "user"
 
     print(get_greeting(name))
 
     while True:
         try:
-            # Recebe o comando do usuário
             command = input("> ").lower().strip()
             if not command:
                 continue
 
-            # Checa se o comando é para sair
-            if any(keyword in command for keyword in EXIT_KEYWORDS):
-                bye_message = get_bye()
-                print(bye_message)
-                save_log(command, bye_message)
-                break
+            interpreted = interpret_command(command)
+            if not interpreted:
+                error = get_error()
+                print(error)
+                save_log(command, error)
+                continue
 
-            # Criar pasta
-            if any(keyword in command for keyword in CREATE_FOLDER_KEYWORDS):
-                create_folder(command)
-                save_log(command, "Folder created successfully.")
+            action = interpreted.get("acao")
+            params = interpreted.get("parametros", {})
 
-            # Abrir site    
-            elif "site" in command:
-                open_website(command)
-                save_log(command, "Website opened successfully.")
-
-            # Abrir programas    
-            elif any(keyword in command for keyword in OPEN_PROGRAMS_KEYWORDS):
-                open_programs(command)
-                save_log(command, "Program opened successfully.")
-
-            # Informa a hora
-            elif any(keyword in command for keyword in HOUR_KEYWORDS):
+            if action == "mostrar_hora":
                 print(show_time())
-                save_log(command, "Displayed current time.")
+                save_log(command, "Mostrou a hora atual.")
 
-            # Informa a data
-            elif any(keyword in command for keyword in DATE_KEYWORDS):
+            elif action == "mostrar_data":
                 print(show_date())
-                save_log(command, "Displayed current date.")
+                save_log(command, "Mostrou a data atual.")
 
-            # Preferências
-            elif any(keyword in command for keyword in PREFERENCES_KEYWORDS):
-                handle_preferences(command, name)
-                save_log(command, "Handled user preferences.")
+            elif action == "criar_pasta":
+                folder_name = params.get("nome", "Nova Pasta")
+                create_folder(folder_name)
+                save_log(command, f"Folder '{folder_name}' created.")
 
-            # Ajuda    
-            elif any(keyword in command for keyword in ["ajuda", "help"]):
-                show_help(command)
-                save_log(command, "Displayed help information.")
+            elif action == "abrir_programa":
+                program_name = params.get("nome")
+                open_programs(program_name)
+                save_log(command, f"Programa '{program_name}' aberto.")
 
-            # Pesquisa com o Gemini
-            elif command.startswith("ia") or command.startswith("pesquisar"):
-                question = command.replace("ia", "").replace("pesquisar", "").strip()
+            elif action == "abrir_site":
+                open_website(command)
+                save_log(command, "Site aberto.")
+
+            elif action == "preferencias":
+                response = handle_preferences(command, name)
+                print(response)
+                save_log(command, "Manipulou as preferências do usuário.")
+
+            elif action == "pesquisa_ia":
+                question = params.get("pergunta", command)
                 response = think(question, name)
                 print(response)
                 save_log(command, response)
 
-            # Comando inválido
-            else:
-                error_message = get_error()
-                print(error_message)
-                save_log(command, error_message)
+            elif action == "ajuda":
+                show_help(command)
+                save_log(command, "Mostrou a lista de comandos.")
 
-            print("Precisa de mais alguma coisa?")
+            elif action == "sair":
+                bye = get_bye()
+                print(bye)
+                save_log(command, bye)
+                break
+
+            else:
+                error = get_error()
+                print(error)
+                save_log(command, error)
+
+            print("Posso ajudar com mais alguma coisa?")
 
         except Exception as e:
-            print(f"Ocorreu um erro inesperado: {e}")
+            print(f"Houve um erro: {e}")
             save_log("ERROR", str(e))
             print("Vamos tentar novamente.")
 

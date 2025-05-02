@@ -1,6 +1,8 @@
 from difflib import get_close_matches
+import json
 import os
 import datetime
+import re
 import webbrowser
 from dusk_cli.ai.gemini_api import ask_gemini, make_response
 from dusk_cli.responses import get_create_folder, get_open_website
@@ -160,6 +162,36 @@ def handle_preferences(command: str, user_name: str) -> None:
         print(f"Ok {user_name}, eu salvei sua {key.replace('_', ' ')} como {value}.")
     else:
         print("Não entendi. Pode repetir de outra forma?")
+
+def interpret_command(command: str) -> dict | None:
+    prompt = f"""
+    Você é um sistema de interpretação de comandos do assistente Dusk.
+
+    Frase: "{command}"
+
+    Responda APENAS com um JSON válido com:
+    - "acao": uma das ações possíveis: ["mostrar_hora", "mostrar_data", "criar_pasta", "abrir_programa", "abrir_site", "sair", "ajuda", "preferencias", "pesquisa_ia"]
+    - "parametros": um dicionário com as informações relevantes para executar a ação.
+
+    Exemplos:
+    Entrada: "que horas são?"
+    Saída: {{ "acao": "mostrar_hora" }}
+
+    Entrada: "crie uma pasta chamada imagens"
+    Saída: {{ "acao": "criar_pasta", "parametros": {{ "nome": "imagens" }} }}
+
+    NÃO adicione nenhuma explicação ou texto extra.
+    """.strip()
+
+    try:
+        response = ask_gemini(prompt)
+        # Extrai só o JSON da resposta
+        json_text = re.search(r'\{.*\}', response, re.DOTALL)
+        if json_text:
+            return json.loads(json_text.group())
+        return None
+    except Exception:
+        return None
 
 def show_help(command):
     """
