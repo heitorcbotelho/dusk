@@ -2,7 +2,6 @@ import os
 import random
 import requests
 from dotenv import load_dotenv
-from dusk_cli.memory import load_preferences
 import textwrap
 
 load_dotenv()
@@ -11,14 +10,12 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 BASE_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
 
 def think(command, name):
-    preferences = load_preferences(name)
 
     context = textwrap.dedent(f"""
         Você é um assistente virtual inteligente chamado Dusk, amigável e útil.
         Seu objetivo é ajudar o usuário com qualquer dúvida ou tarefa.
 
         Nome do usuário: {name}
-        Preferências do usuário: {preferences}
 
         Comando do usuário: {command}
 

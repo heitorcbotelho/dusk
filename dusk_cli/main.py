@@ -4,8 +4,7 @@ from dusk_cli.program_launcher import open_programs
 
 def main():
     from dusk_cli.command import (
-        show_time, show_date, create_folder, open_website,
-        handle_preferences, show_help
+        show_time, show_date, create_folder, open_website, show_help
     )
     from dusk_cli.memory import save_name, load_name
     from dusk_cli.responses import get_greeting, get_bye, get_error
@@ -58,11 +57,6 @@ def main():
             elif action == "abrir_site":
                 open_website(command)
                 save_log(command, "Site aberto.")
-
-            elif action == "preferencias":
-                response = handle_preferences(command, name)
-                print(response)
-                save_log(command, "Manipulou as preferências do usuário.")
 
             elif action == "pesquisa_ia":
                 question = params.get("pergunta", command)
