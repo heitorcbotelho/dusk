@@ -1,10 +1,39 @@
 from difflib import get_close_matches
 import os
 import subprocess
-from dusk_cli.ai.gemini_api import ask_gemini
+import json
+from dusk_cli.ai.gemini_api import ask_gemini, make_response
 
 DEBUG = True  # Ative para ver a resposta da IA
-def open_programs(command: str):
+PROGRAM_PATHS_FILE = "data/program_paths.json"  # Arquivo JSON para armazenar os caminhos dos programas
+def load_program_paths() -> dict:
+    """
+    Carrega os caminhos dos programas salvos no arquivo JSON.
+    """
+    try:
+        with open(PROGRAM_PATHS_FILE, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError as e:
+        print(make_response(f"Erro ao carregar os caminhos dos programas: {e}"))
+        return {}
+
+def save_program_paths(paths: dict) -> None:
+    """
+    Salva os caminhos dos programas no arquivo JSON.
+    """
+    try:
+        with open(PROGRAM_PATHS_FILE, "w", encoding="utf-8") as file:
+            json.dump(paths, file, indent=4, ensure_ascii=False)
+    except Exception as e:
+        print(make_response(f"Erro ao salvar os caminhos dos programas: {e}"))
+
+def open_programs(command: str, name: str) -> None:
+    """
+    Abre programas com base no comando do usuário. Se o programa não for encontrado,
+    solicita o caminho ao usuário e salva para uso futuro.
+    """
     def find_executable_direct(name: str):
         try:
             result = subprocess.check_output(
@@ -84,36 +113,55 @@ def open_programs(command: str):
     try:
         cleaned_command = command.lower().strip().replace("?", "").replace("abra", "").replace("dusk", "").strip()
 
+        # Carrega os caminhos salvos
+        program_paths = load_program_paths()
+
+        # Verifica se o programa já está salvo
+        if cleaned_command in program_paths:
+            program_path = program_paths[cleaned_command]
+            subprocess.Popen([program_path])
+            print(make_response(f"Abrindo {cleaned_command} a partir do caminho salvo!", name))
+            return
+
+        # Tenta identificar o programa com o Gemini
         prompt = f"O usuário disse: '{cleaned_command}'. Qual programa você acha que ele quer abrir no Windows? Responda apenas com o nome curto (tipo 'calc.exe' ou 'notepad.exe') ou nome exato do aplicativo (como 'Steam', 'Telegram')."
         response = ask_gemini(prompt)
         program_name = response.strip()
-        
-        # print(f"[DEBUG Gemini] Programa identificado: {program_name}")
 
         # 1. Tenta abrir diretamente
         program_path = find_executable_direct(program_name)
         if program_path:
             subprocess.Popen([program_path])
-            print(f"Abrindo {program_name}!")
+            print(make_response(f"Aberto {program_name}!", name))
             return
 
         # 2. Tenta abrir atalho do menu iniciar
         shortcut_path = find_shortcut_in_start_menu(program_name)
         if shortcut_path:
             subprocess.Popen(["explorer", shortcut_path])
-            print(f"Abrindo {program_name} pelo menu iniciar!")
+            print(make_response(f"Aberto {program_name} pelo menu iniciar!", name))
             return
 
         # 3. Tenta procurar a instalação
         installed_path = find_installed_program_path(program_name)
         if installed_path:
-            print(f"[DEBUG] Pasta encontrada: {installed_path}")
             executable = find_executable_in_folder(installed_path, program_name)
             if executable:
                 subprocess.Popen([executable])
-                print(f"Abrindo {program_name}!")
+                print(make_response(f"Aberto {program_name}!", name))
                 return
 
-        print(f"Não encontrei o programa '{program_name}' instalado no sistema.")
+        # Se não encontrar, solicita o caminho ao usuário
+        make_response(f"Não encontrei o programa '{program_name}'.")
+        user_path = input(f"Por favor, informe o caminho completo para o programa '{program_name}': ").strip()
+
+        if os.path.isfile(user_path) and user_path.endswith(".exe"):
+            program_paths[cleaned_command] = user_path
+            save_program_paths(program_paths)
+            subprocess.Popen([user_path])
+            print(make_response(f"Executando {program_name} e salvando o caminho para uso futuro!", name))
+        else:
+            print(make_response("O caminho informado não é válido ou não é um executável.", name))
+
     except Exception as e:
-        print(f"Erro ao abrir programa: {e}")
+        print(make_response(f"Erro ao abrir programa: {e}", name))

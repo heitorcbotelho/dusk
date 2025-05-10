@@ -52,7 +52,7 @@ def ask_gemini(question: str) -> str:
     except requests.exceptions.RequestException as e:
         return f"Erro ao se comunicar com a API Gemini: {e}"
 
-def make_response(text: str, name: str, details = "") -> str:
+def make_response(text: str, name = "Usuário", details = "") -> str:
 
     styles = random.choice([
         "responda com um tom descontraído e natural.",

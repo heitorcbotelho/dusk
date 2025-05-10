@@ -51,7 +51,7 @@ def main():
 
             elif action == "abrir_programa":
                 program_name = params.get("nome")
-                open_programs(program_name)
+                open_programs(program_name, name)
                 save_log(command, f"Programa '{program_name}' aberto.")
 
             elif action == "abrir_site":
