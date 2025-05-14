@@ -2,22 +2,12 @@ import json
 import os
 import datetime
 import re
-import shutil
 import webbrowser
 from dusk_cli.ai.gemini_api import ask_gemini, make_response
 from dusk_cli.memory import load_name
 
 name = load_name()
 FOLDER_PATH = os.getenv("CREATE_FOLDER_PATH")
-
-ASK_KEYWORDS = ["qual", "qual é", "meu", "minha"]
-SAVE_KEYWORDS = ["é", "gosto de", "prefiro"]
-
-URLS = {
-    "google": "https://google.com",
-    "youtube": "https://youtube.com",
-    "wikipedia": "https://wikipedia.com",
-}
 
 def show_time() -> None:
     """
