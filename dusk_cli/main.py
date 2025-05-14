@@ -1,3 +1,4 @@
+from dusk_cli.ai.gemini_api import make_response
 from dusk_cli.command import interpret_command
 from dusk_cli.program_launcher import open_programs
 
@@ -7,7 +8,6 @@ def main():
         show_time, show_date, create_folder, open_website, show_help
     )
     from dusk_cli.memory import save_name, load_name
-    from dusk_cli.responses import get_greeting, get_bye, get_error
     from dusk_cli.log import save_log
     from dusk_cli.ai.gemini_api import think
 
@@ -18,7 +18,7 @@ def main():
         print(f"Houve um problema para carregar o nome: {e}")
         name = "user"
 
-    print(get_greeting(name))
+    print(make_response("Olá, como posso ajudar?", name, "lembre-se de ser amigável"))
 
     while True:
         try:
@@ -28,9 +28,8 @@ def main():
 
             interpreted = interpret_command(command)
             if not interpreted:
-                error = get_error()
-                print(error)
-                save_log(command, error)
+                print(make_response("Desculpe, não entendi o comando.", name))
+                save_log(command, "Comando não reconhecido.")
                 continue
 
             action = interpreted.get("acao")
@@ -69,17 +68,11 @@ def main():
                 save_log(command, "Mostrou a lista de comandos.")
 
             elif action == "sair":
-                bye = get_bye()
-                print(bye)
-                save_log(command, bye)
+                print(make_response("Até logo!", name, "se despediu"))
+                save_log(command, "Saiu do programa.")
                 break
 
-            else:
-                error = get_error()
-                print(error)
-                save_log(command, error)
-
-            print("Posso ajudar com mais alguma coisa?")
+            print(make_response("Posso ajudar com mais alguma coisa?", name))
 
         except Exception as e:
             print(f"Houve um erro: {e}")

@@ -2,6 +2,7 @@ import json
 import os
 import datetime
 import re
+import shutil
 import webbrowser
 from dusk_cli.ai.gemini_api import ask_gemini, make_response
 from dusk_cli.memory import load_name
@@ -67,22 +68,20 @@ def create_folder(command: str) -> None:
         print(make_response(f"Ocorreu um erro ao tentar criar a pasta: {e}", name, "Erro durante a criação de uma pasta no computador"))
 
 def open_website(command: str) -> None:
-    """
-    Abre um site baseado no comando fornecido, utilizando o navegador padrão.
-    """
     try:
-        # Extrai nome do site
+        # 1. Detecta a URL do site com o Gemini
         prompt_site = f"""
-        Você é um assistente que extrai apenas o nome do site solicitado em um comando.
+        Você é um assistente que recebe um comando do usuário e retorna a URL completa (incluindo https://) do site correto que ele está tentando acessar.
 
-        Comando do usuário: {command}
+        Comando: "{command}"
 
-        Retorne só o nome, como 'google', 'youtube', etc.
+        Responda apenas com a URL, como: https://store.steampowered.com ou https://telegram.org
         """
-        site_name = ask_gemini(prompt_site.strip().lower()).strip()
-        url = f"https://{site_name}.com"
+        site_url = ask_gemini(prompt_site.strip().lower()).strip()
+        if not site_url.startswith("http"):
+            site_url = f"https://{site_url}"
 
-        # Detecta se é para abrir em modo anônimo
+        # 2. Detecta se o usuário quer modo anônimo
         prompt_anon = f"""
         O usuário quer abrir o site em modo anônimo?
 
@@ -91,19 +90,18 @@ def open_website(command: str) -> None:
         Responda apenas 'sim' ou 'não'.
         """
         anon_response = ask_gemini(prompt_anon.strip().lower()).strip()
-
         if "sim" in anon_response.lower():
             print(make_response(
-                f"Modo anônimo ainda não é suportado com o navegador padrão. Abrindo normalmente...",
-                name,
-                "Futuramente o Dusk poderá detectar o navegador e abrir corretamente em modo privado."
+                "Modo anônimo ainda não é suportado. Abrindo normalmente...",
+                name
             ))
 
-        webbrowser.open_new(url)
-        print(make_response(f"O site {site_name} está sendo aberto.", name))
+        # 3. Abre o site com navegador padrão
+        webbrowser.open(site_url)
+        print(make_response(f"Abrindo {site_url} no seu navegador padrão.", name))
 
     except Exception as e:
-        print(make_response(f"Ocorreu um erro ao abrir o site: {e}", name, "Erro ao abrir site no navegador."))
+        print(make_response(f"Ocorreu um erro ao abrir o site: {e}", name))
 
 def interpret_command(command: str) -> dict | None:
     prompt = f"""
